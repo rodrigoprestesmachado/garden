@@ -21,5 +21,8 @@ import javax.ejb.Remote;
 public interface GardenRemote {
 	
 	public boolean willRain();
+	
+	public void sendEmail();
+	
 
 }
