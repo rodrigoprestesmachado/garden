@@ -20,7 +20,9 @@ import javax.ejb.Remote;
 @Remote
 public interface GardenRemote {
 	
-	public boolean willRain();
+	public boolean open();
+	
+	public boolean close();
 	
 	public void sendEmail();
 	

@@ -66,7 +66,13 @@ public class Garden implements GardenRemote {
     public Garden() { }
 
 	@Override
-	public boolean willRain() {
+	public boolean open() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public boolean close() {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -94,6 +100,5 @@ public class Garden implements GardenRemote {
 			e.printStackTrace();
 		}
 	}
-	
 
 }
