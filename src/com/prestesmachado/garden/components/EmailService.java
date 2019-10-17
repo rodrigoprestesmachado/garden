@@ -14,18 +14,18 @@ import javax.jms.MessageListener;
  */
 @MessageDriven(activationConfig = {
 	    @ActivationConfigProperty(propertyName = "destinationLookup",
-	            propertyValue = "java:/jms/queue/ExpiryQueue"),
+	            propertyValue = "java:/jms/queue/DLQ"),
 	    @ActivationConfigProperty(propertyName = "destinationType",
 	            propertyValue = "javax.jms.Queue")
 	})
-public class EmailMDB implements MessageListener {
+public class EmailService implements MessageListener {
 
-	private static final Logger log = Logger.getLogger(EmailMDB.class.getName());
+	private static final Logger log = Logger.getLogger(EmailService.class.getName());
 	
     /**
      * Default constructor. 
      */
-    public EmailMDB() {
+    public EmailService() {
         // TODO Auto-generated constructor stub
     }
 	
