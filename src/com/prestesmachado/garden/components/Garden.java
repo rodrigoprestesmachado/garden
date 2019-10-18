@@ -50,16 +50,21 @@ public class Garden implements GardenRemote {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/open")
     @Override
-	public boolean open() {
-		return false;
+	public String open() {
+    	
+    	StringBuilder json = new StringBuilder();
+    	json.append("{\"result\":\"true\"}");
+		return json.toString();
 	}
 	
     @GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/close")
     @Override
-	public boolean close() {
-		return false;
+	public String close() {
+    	StringBuilder json = new StringBuilder();
+    	json.append("{\"result\":\"true\"}");
+		return json.toString();
 	}
 
 	@Override

@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.prestesmachado.garden.components;
+package com.prestesmachado.garden.model;
 
-import javax.ejb.Remote;
+public class Tap {
+	
+	private String name;
 
-@Remote
-public interface GardenRemote {
-	
-	public String open();
-	
-	public String close();
-	
-	public void sendEmail();
-	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 }
