@@ -15,6 +15,9 @@
  */
 package com.prestesmachado.garden.model;
 
+import javax.persistence.Entity;
+
+@Entity
 public class WaterHistory {
 	
 	private User user;

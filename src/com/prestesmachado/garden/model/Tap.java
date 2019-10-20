@@ -15,7 +15,16 @@
  */
 package com.prestesmachado.garden.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
 public class Tap {
+	
+	@Id
+	@GeneratedValue
+	private long id;
 	
 	private String name;
 
