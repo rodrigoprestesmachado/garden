@@ -1,4 +1,6 @@
 /**
+ * @license
+ * 
  * Copyright 2019 Rodrigo Prestes Machado
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +22,11 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
+/**
+ * Register the Web Services
+ * 
+ * @author Rodrigo Prestes Machado
+ */
 @ApplicationPath(value = "/ws")
 public class WSConfiguration extends Application {
 	
@@ -33,7 +40,7 @@ public class WSConfiguration extends Application {
 	}
 
 	private void addRestResourceClasses(Set<Class<?>> resources) {
-		resources.add(com.prestesmachado.garden.components.Garden.class);
+		resources.add(com.prestesmachado.garden.components.GardenAPI.class);
 	}
 	
 }

@@ -1,4 +1,6 @@
 /**
+ * @license
+ * 
  * Copyright 2019 Rodrigo Prestes Machado
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +17,8 @@
  */
 package com.prestesmachado.garden.components;
 
+import java.util.logging.Logger;
+
 import javax.ejb.Stateless;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSContext;
@@ -27,45 +31,72 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import com.prestesmachado.garden.model.Tap;
+
 /**
- * Session Bean implementation class Garden
+ * Session Bean implementation for garden api
  * 
  * @author Rodrigo Prestes Machado
  */
 @Path("/api")
 @Stateless
-public class Garden implements GardenRemote {
+public class GardenAPI implements GardenRemote {
+	
+	private Data dao;
 	
 	@Context
 	private HttpServletRequest request;
 	
-
-    public Garden() { }
-
-    @GET
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/open")
-    @Override
-	public String open() {
-    	
-    	StringBuilder json = new StringBuilder();
-    	json.append("{\"result\":\"true\"}");
-		return json.toString();
-	}
+	private static final Logger log = Logger.getLogger(GardenAPI.class.getName());
 	
+	
+    public GardenAPI() {	
+    	try {
+    		InitialContext context = new InitialContext();
+			dao = (Data) context.lookup("java:global/Garden/Data");
+		} catch (NamingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+
     @GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/close")
+	@Path("/auth")
     @Override
-	public String close() {
+	public String authentication() {
+    	log.info("Authentication method");
     	StringBuilder json = new StringBuilder();
-    	json.append("{\"result\":\"true\"}");
-		return json.toString();
-	}
+    	json.append("{\"auth\":\"true\"}");
+        return json.toString();
+    }
+    
+    @GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/open/{name}/{value}")
+    @Override
+	public String open(@PathParam("name") String name, @PathParam("value") boolean value) {
+    	
+    	log.info("Open method");
+    	
+    	Tap tap = dao.findTap(name);
+  
+    	StringBuilder json = new StringBuilder();
+    	if (tap != null) {
+    		tap.setSituation(value);
+    		dao.persistTap(tap);
+    		json.append("{\"open\":\""+ tap.isSituation() +"\"}");
+    	}
+    	else
+    		json.append("{\"open\":\"none\"}");
+    	
+    	return json.toString();
+    }
 
 	@Override
 	public void sendEmail() {
@@ -83,7 +114,6 @@ public class Garden implements GardenRemote {
 			map.setString("test", "Test value");
 			
 			producer.send(queue, map);
-			
 			
 		} catch (NamingException | JMSException e) {
 			// TODO Auto-generated catch block

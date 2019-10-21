@@ -24,10 +24,12 @@ public class Tap {
 	
 	@Id
 	@GeneratedValue
-	private long id;
+	private long idTap;
 	
 	private String name;
-
+	
+	private boolean situation;
+	
 	public String getName() {
 		return name;
 	}
@@ -36,4 +38,12 @@ public class Tap {
 		this.name = name;
 	}
 
+	public boolean isSituation() {
+		return situation;
+	}
+
+	public void setSituation(boolean situation) {
+		this.situation = situation;
+	}
+	
 }

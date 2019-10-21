@@ -1,4 +1,6 @@
 /**
+ * @license
+ * 
  * Copyright 2019 Rodrigo Prestes Machado
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,15 +18,19 @@
 package com.prestesmachado.garden.components;
 
 import javax.ejb.Remote;
+import javax.ws.rs.PathParam;
 
+/**
+ * Garden API contract
+ * 
+ * @author Rodrigo Prestes Machado
+ */
 @Remote
 public interface GardenRemote {
 	
-	public String open();
+	public String authentication();
 	
-	public String close();
+	public String open(@PathParam("name") String name, @PathParam("value") boolean value);
 	
 	public void sendEmail();
-	
-
 }
