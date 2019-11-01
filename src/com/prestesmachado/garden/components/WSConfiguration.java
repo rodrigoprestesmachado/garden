@@ -27,7 +27,7 @@ import javax.ws.rs.core.Application;
  * 
  * @author Rodrigo Prestes Machado
  */
-@ApplicationPath(value = "/ws")
+@ApplicationPath(value = "/api")
 public class WSConfiguration extends Application {
 	
 	public WSConfiguration() { }

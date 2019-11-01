@@ -26,6 +26,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import com.prestesmachado.garden.model.Tap;
+import com.prestesmachado.garden.model.User;
 
 /**
  * Implements a JPA API for data access
@@ -54,6 +55,26 @@ public class Data {
 			criteria.select(root);
 			criteria.where(builder.like(root.get("name"), name + "%"));
 
+			return em.createQuery(criteria).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	/**
+	 * Return the user object
+	 * 
+	 * @param String email : The email of the user
+	 * @return User user: The user object
+	 */
+	public User findUser(String email, String password) {
+		try {
+			CriteriaBuilder builder = em.getCriteriaBuilder();
+
+			CriteriaQuery<User> criteria = builder.createQuery(User.class);
+			Root<User> root = criteria.from(User.class);
+			criteria.select(root);
+			criteria.where(builder.like(root.get("email"), email));
 			return em.createQuery(criteria).getSingleResult();
 		} catch (NoResultException e) {
 			return null;

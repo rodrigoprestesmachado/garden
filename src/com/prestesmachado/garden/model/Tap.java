@@ -24,11 +24,19 @@ public class Tap {
 	
 	@Id
 	@GeneratedValue
-	private long idTap;
+	private long id;
 	
 	private String name;
 	
 	private boolean situation;
+	
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
 	
 	public String getName() {
 		return name;

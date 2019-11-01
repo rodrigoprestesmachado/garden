@@ -28,9 +28,11 @@ import javax.ws.rs.PathParam;
 @Remote
 public interface GardenRemote {
 	
-	public String authentication();
+	public String sigin(@PathParam("name") String name, @PathParam("password") String password);
 	
-	public String open(@PathParam("name") String name, @PathParam("value") boolean value);
+	public String changeTapSituation(@PathParam("name") String name, @PathParam("value") boolean value);
+	
+	public String isOpen(@PathParam("name") String name);
 	
 	public void sendEmail();
 }

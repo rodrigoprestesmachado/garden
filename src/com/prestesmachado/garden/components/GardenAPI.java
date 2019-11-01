@@ -37,13 +37,14 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import com.prestesmachado.garden.model.Tap;
+import com.prestesmachado.garden.model.User;
 
 /**
  * Session Bean implementation for garden api
  * 
  * @author Rodrigo Prestes Machado
  */
-@Path("/api")
+@Path("/v1")
 @Stateless
 public class GardenAPI implements GardenRemote {
 	
@@ -66,21 +67,29 @@ public class GardenAPI implements GardenRemote {
     }
 
     @GET
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/auth")
-    @Override
-	public String authentication() {
-    	log.info("Authentication method");
+   	@Produces(MediaType.APPLICATION_JSON)
+   	@Path("/sigin/{email}/{password}")
+   	public String sigin(@PathParam("email") String email, @PathParam("password") String password) {
+       	
+    	log.info("Sigin method");
+       	
+       	User user = dao.findUser(email, password);
+        
     	StringBuilder json = new StringBuilder();
-    	json.append("{\"auth\":\"true\"}");
-        return json.toString();
+    	if (user != null) {
+    		json.append("{\"sigin\":\"true\"}");
+    	}
+    	else
+    		json.append("{\"sigin\":\"false\"}");
+    	
+    	return json.toString();
     }
     
     @GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/open/{name}/{value}")
     @Override
-	public String open(@PathParam("name") String name, @PathParam("value") boolean value) {
+	public String changeTapSituation(@PathParam("name") String name, @PathParam("value") boolean value) {
     	
     	log.info("Open method");
     	
@@ -97,6 +106,27 @@ public class GardenAPI implements GardenRemote {
     	
     	return json.toString();
     }
+    
+    
+    @GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/isopen/{name}")
+    @Override
+	public String isOpen(@PathParam("name") String name) {
+    	
+    	log.info("Open method");
+    	
+    	Tap tap = dao.findTap(name);
+  
+    	StringBuilder json = new StringBuilder();
+    	if (tap != null)
+    		json.append("{\"open\":\""+ tap.isSituation() +"\"}");
+    	else
+    		json.append("{\"open\":\"none\"}");
+    	
+    	return json.toString();
+    }
+    
 
 	@Override
 	public void sendEmail() {
