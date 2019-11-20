@@ -53,7 +53,16 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
 			</plugin>
-
+			
+			<plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>2.0.1.Final</version>
+                <configuration>
+					<wildfly.username>${wildfly.username}</wildfly.username>
+					<wildfly.password>${wildfly.password}</wildfly.password>
+				</configuration>
+            </plugin>
 
 		</plugins>
 	</build>
