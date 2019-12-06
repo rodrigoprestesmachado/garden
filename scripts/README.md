@@ -1,4 +1,4 @@
-# Weather scritpts
+# Weather scripts
 
 ## Usage `GardenWeather.ts`
 
