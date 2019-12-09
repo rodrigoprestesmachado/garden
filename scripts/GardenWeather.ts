@@ -13,43 +13,63 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const propertiesReader: any = require("properties-reader");
 const https: any = require("https");
 const axios: any = require("axios");
 const shell: any = require("shelljs");
+const nodemailer: any = require("nodemailer");
 
 /**
  * @author Rodrigo Prestes Machado
  */
 class GardenWeather {
-  // Open Weather service
+  // Open Weather service configuration
   private WEATHER_WS: string;
   private POA: string;
   private KEY: string;
 
-  // Telegram
-  private TELEGRAM_PHONE: string;
-  private TELEGRAM_PATH: string;
-
   // Garden service
   private GARDEN_WS: string;
 
+  // Gmail configuration
+  private GMAIL: string;
+  private GMAIL_PASS: string;
+
+  // Telegram configuration
+  private TELEGRAM_PHONE: string;
+  private TELEGRAM_PATH: string;
+
+  // Properties file
+  private properties: any;
+
   constructor() {
-    this.WEATHER_WS = "https://api.openweathermap.org/data/2.5/forecast?id=";
-    this.POA = "3452925";
-    this.KEY = "your key";
+    // Gets all configuration from a propertie file
+    this.properties = propertiesReader("properties.file");
 
-    this.TELEGRAM_PHONE = "yout phne";
-    this.TELEGRAM_PATH = " your telegram cli path";
+    this.WEATHER_WS = this.properties.get("weather.ws");
+    this.POA = this.properties.get("weather.poa");
+    this.KEY = this.properties.get("weather.key");
 
-    this.GARDEN_WS = "http://code.inf.poa.ifrs.edu.br/Garden/api/v1/open/";
+    this.GARDEN_WS = this.properties.get("garden.ws");
+
+    this.GMAIL = this.properties.get("gmail.email");
+    this.GMAIL_PASS = this.properties.get("gmail.password");
+
+    this.TELEGRAM_PHONE = this.properties.get("telegram.phone");
+    this.TELEGRAM_PATH = this.properties.get("telegram.path");
   }
 
   /**
    * Gets the weather conditions, sets the Garden WS and send Telegram message
    * @param setGardenWS true if want to set the Garden WS
+   * @param sendEmail true if want to send an gmail message
    * @param sendTelegramMessage true if want to send a Telegram message
    */
-  public getWeather(setGardenWS: boolean, sendTelegramMessage: boolean) {
+  public getWeather(
+    setGardenWS: boolean,
+    sendEmail: boolean,
+    sendTelegramMessage: boolean
+  ) {
     https
       .get(this.WEATHER_WS + this.POA + "&APPID=" + this.KEY, resp => {
         let data = "";
@@ -59,15 +79,19 @@ class GardenWeather {
           data += chunk;
         });
 
-        // The whole response has been received. Print out the result.
+        // The whole response has been received.
         resp.on("end", () => {
+          // Reads data from weather service
           let conditions = JSON.parse(data);
-
+          // checks if will rain tomorrow
           let rainWarning = this.verifyConditions(conditions);
-
+          // creates the weather object
           let weather = this.createWeather(rainWarning);
-
+          // set the condition to Garden service
           setGardenWS == true ? this.setGardenWS(weather.action, "red") : "";
+          // Sends an e-mail message
+          sendEmail == true ? this.sendEmail(weather.text) : "";
+          // Sends telegram message
           sendTelegramMessage == true
             ? this.sendTelegramMessage(weather.text, "Automation")
             : "";
@@ -171,6 +195,35 @@ class GardenWeather {
   }
 
   /**
+   * Sends an e-mail message using gmail
+   * @param message
+   */
+  private sendEmail(message: string) {
+    var transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: this.GMAIL,
+        pass: this.GMAIL_PASS
+      }
+    });
+
+    let mailOptions = {
+      from: this.GMAIL,
+      to: this.GMAIL,
+      subject: "Previsão do tempo",
+      text: message
+    };
+
+    transporter.sendMail(mailOptions, function(error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
+  }
+
+  /**
    * Returns the Open Weather codes
    */
   private wsCodes() {
@@ -209,4 +262,4 @@ class Weather {
 }
 
 let g = new GardenWeather();
-g.getWeather(true, true);
+g.getWeather(true, true, true);
