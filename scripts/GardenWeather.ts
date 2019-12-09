@@ -20,6 +20,9 @@ const shell: any = require("shelljs");
 const nodemailer: any = require("nodemailer");
 
 /**
+ * GardenWeather class. Verifies the weather, sets the Garden service and
+ * comunicates the result through gmail and telegram
+ *
  * @author Rodrigo Prestes Machado
  */
 class GardenWeather {
