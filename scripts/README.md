@@ -1,12 +1,14 @@
 # Weather scripts
 
 ## Usage `GardenWeather.ts`
-
 ```typescript
 let weather = new GardenWeather();
-weather.getWeather(true, true);
+weather.getWeather(true, true, true;
 ```
 
-### Methods
+### Public methods:
 
-`getWeather(setGardenWS: boolean, sendTelegramMessage: boolean)`
+`public getWeather(
+    setGardenWS: boolean,
+    sendEmail: boolean,
+    sendTelegramMessage: boolean`

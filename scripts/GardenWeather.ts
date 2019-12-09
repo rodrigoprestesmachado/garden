@@ -91,18 +91,23 @@ class GardenWeather {
           // creates the weather object
           let weather = this.createWeather(rainWarning);
           // set the condition to Garden service
-          setGardenWS == true ? this.setGardenWS(weather.action, "red") : "";
+          console.log("[INFO] GardenWeather: setGardenWS = " + setGardenWS);
+          setGardenWS === true ? this.setGardenWS(weather.action, "red") : "";
           // Sends an e-mail message
-          sendEmail == true ? this.sendEmail(weather.text) : "";
+          console.log("[INFO] GardenWeather: sendEmail = " + sendEmail);
+          sendEmail === true ? this.sendEmail(weather.text) : "";
           // Sends telegram message
-          sendTelegramMessage == true
+          console.log(
+            "[INFO] GardenWeather: sendTelegramMessage = " + sendTelegramMessage
+          );
+          sendTelegramMessage === true
             ? this.sendTelegramMessage(weather.text, "Automation")
             : "";
         });
       })
 
       .on("error", err => {
-        console.log("Error: " + err.message);
+        console.log("[ERROR] GardenWeather: " + err.message);
       });
   }
 
@@ -168,14 +173,21 @@ class GardenWeather {
    * @param open
    */
   private setGardenWS(open: boolean, tap: string) {
+    let garden_ws_url = this.GARDEN_WS + tap + "/" + open;
+    console.log("[INFO] GardenWeather: garden ws url - " + garden_ws_url);
     axios
       .get(this.GARDEN_WS + tap + "/" + open)
       .then(response => {
-        console.log(response.data.url);
-        console.log(response.data.explanation);
+        console.log(
+          "[INFO] GardenWeather: response.data.url " + response.data.url
+        );
+        console.log(
+          "[INFO] GardenWeather: response.data.explanation " +
+            response.data.explanation
+        );
       })
       .catch(error => {
-        console.log(error);
+        console.log("[ERROR] GardenWeather: " + error);
       });
   }
 
@@ -193,7 +205,7 @@ class GardenWeather {
       " " +
       message +
       '"';
-    console.log("Telegram command: " + command);
+    console.log("[INFO] GardenWeather: telegram command - " + command);
     shell.exec(command);
   }
 
@@ -219,9 +231,9 @@ class GardenWeather {
 
     transporter.sendMail(mailOptions, function(error, info) {
       if (error) {
-        console.log(error);
+        console.log("[ERROR] GardenWeather: " + error);
       } else {
-        console.log("Email sent: " + info.response);
+        console.log("[INFO] GardenWeather: e-mail sent - " + info.response);
       }
     });
   }
