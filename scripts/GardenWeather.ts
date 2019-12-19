@@ -28,8 +28,8 @@ const nodemailer: any = require("nodemailer");
 class GardenWeather {
   // Open Weather service configuration
   private WEATHER_WS: string;
-  private POA: string;
-  private KEY: string;
+  private WEATHER_POA: string;
+  private WEATHER_KEY: string;
 
   // Garden service
   private GARDEN_WS: string;
@@ -50,8 +50,8 @@ class GardenWeather {
     this.properties = propertiesReader("properties.file");
 
     this.WEATHER_WS = this.properties.get("weather.ws");
-    this.POA = this.properties.get("weather.poa");
-    this.KEY = this.properties.get("weather.key");
+    this.WEATHER_POA = this.properties.get("weather.poa");
+    this.WEATHER_KEY = this.properties.get("weather.key");
 
     this.GARDEN_WS = this.properties.get("garden.ws");
 
@@ -74,7 +74,7 @@ class GardenWeather {
     sendTelegramMessage: boolean
   ) {
     https
-      .get(this.WEATHER_WS + this.POA + "&APPID=" + this.KEY, resp => {
+      .get(this.WEATHER_WS + this.WEATHER_POA + "&APPID=" + this.WEATHER_KEY, resp => {
         let data = "";
 
         // A chunk of data has been recieved.
@@ -172,18 +172,18 @@ class GardenWeather {
    * Sets the Garden WS status
    * @param open
    */
-  private setGardenWS(open: boolean, tap: string) {
-    let garden_ws_url = this.GARDEN_WS + tap + "/" + open;
-    console.log("[INFO] GardenWeather: garden ws url - " + garden_ws_url);
+  private setGardenWS(operation: boolean, tap: string) {
+    let serviceUrl = this.GARDEN_WS + "/open/" + tap + "/" + operation + "/" + this.WEATHER_KEY;
+    console.log("[INFO] Service URL: " + serviceUrl)
     axios
-      .get(this.GARDEN_WS + tap + "/" + open)
+      .get(serviceUrl)
       .then(response => {
         console.log(
           "[INFO] GardenWeather: response.data.url " + response.data.url
         );
         console.log(
           "[INFO] GardenWeather: response.data.explanation " +
-            response.data.explanation
+          response.data.explanation
         );
       })
       .catch(error => {
@@ -229,7 +229,7 @@ class GardenWeather {
       text: message
     };
 
-    transporter.sendMail(mailOptions, function(error, info) {
+    transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         console.log("[ERROR] GardenWeather: " + error);
       } else {
@@ -277,4 +277,4 @@ class Weather {
 }
 
 let g = new GardenWeather();
-g.getWeather(true, true, true);
+g.getWeather(true, true, false);

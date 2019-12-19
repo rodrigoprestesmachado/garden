@@ -6,7 +6,7 @@ class Tap:
 
     def getTapSituation(self, name):
         # api-endpoint
-        URL = "http://code.inf.poa.ifrs.edu.br:8080/Garden/api/v1/isopen/" + "red"
+        URL = "http://code.inf.poa.ifrs.edu.br/Garden/api/v1/isopen/" + name
 
         # defining a params dict for the parameters to be sent to the API
         PARAMS = {}
@@ -17,10 +17,13 @@ class Tap:
         # extracting data in json format
         self.situation = result.json()["open"]
 
-    def isOpen(self):
-        self.getTapSituation("red")
+    def wet(self, tapName, duration):
+        self.getTapSituation(tapName)
+        if (self.situation == "true"):
+            print("true")
+
         return self.situation
 
 
 tap = Tap()
-print(tap.isOpen())
+print(tap.wet("red", 60.0))

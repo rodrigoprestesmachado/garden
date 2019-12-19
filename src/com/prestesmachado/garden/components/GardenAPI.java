@@ -47,104 +47,100 @@ import com.prestesmachado.garden.model.User;
 @Path("/v1")
 @Stateless
 public class GardenAPI implements GardenRemote {
-	
+
 	private Data dao;
-	
+
 	@Context
 	private HttpServletRequest request;
-	
+
 	private static final Logger log = Logger.getLogger(GardenAPI.class.getName());
-	
-	
-    public GardenAPI() {	
-    	try {
-    		InitialContext context = new InitialContext();
+
+	public GardenAPI() {
+		try {
+			InitialContext context = new InitialContext();
 			dao = (Data) context.lookup("java:global/Garden/Data");
 		} catch (NamingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    }
+	}
 
-    @GET
-   	@Produces(MediaType.APPLICATION_JSON)
-   	@Path("/sigin/{email}/{password}")
-   	public String sigin(@PathParam("email") String email, @PathParam("password") String password) {
-       	
-    	log.info("Sigin method");
-       	
-       	User user = dao.findUser(email, password);
-        
-    	StringBuilder json = new StringBuilder();
-    	if (user != null) {
-    		json.append("{\"sigin\":\"true\"}");
-    	}
-    	else
-    		json.append("{\"sigin\":\"false\"}");
-    	
-    	return json.toString();
-    }
-    
-    @GET
+	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/open/{name}/{value}")
-    @Override
-	public String changeTapSituation(@PathParam("name") String name, @PathParam("value") boolean value) {
-    	
-    	log.info("Open method");
-    	
-    	Tap tap = dao.findTap(name);
-  
-    	StringBuilder json = new StringBuilder();
-    	if (tap != null) {
-    		tap.setSituation(value);
-    		dao.persistTap(tap);
-    		json.append("{\"open\":\""+ tap.isSituation() +"\"}");
-    	}
-    	else
-    		json.append("{\"open\":\"none\"}");
-    	
-    	return json.toString();
-    }
-    
-    
-    @GET
+	@Path("/sigin/{email}/{password}")
+	public String sigin(@PathParam("email") String email, @PathParam("password") String password) {
+
+		log.info("Sigin method");
+
+		User user = dao.findUser(email, password);
+
+		StringBuilder json = new StringBuilder();
+		if (user != null) {
+			json.append("{\"sigin\":\"true\"}");
+		} else
+			json.append("{\"sigin\":\"false\"}");
+
+		return json.toString();
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/open/{name}/{value}/{key}")
+	@Override
+	public String changeTapSituation(@PathParam("name") String name, @PathParam("value") boolean value,
+			@PathParam("key") String key) {
+
+		log.info("Open method");
+
+		Tap tap = dao.findTap(name);
+		StringBuilder json = new StringBuilder();
+		if (tap != null && tap.getTapKey().equals(key)) {
+			tap.setSituation(value);
+			dao.persistTap(tap);
+			json.append("{\"open\":\"" + tap.isSituation() + "\"}");
+		} else
+			json.append("{\"open\":\"none\"}");
+
+		return json.toString();
+	}
+
+	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/isopen/{name}")
-    @Override
+	@Override
 	public String isOpen(@PathParam("name") String name) {
-    	
-    	log.info("Open method");
-    	
-    	Tap tap = dao.findTap(name);
-  
-    	StringBuilder json = new StringBuilder();
-    	if (tap != null)
-    		json.append("{\"open\":\""+ tap.isSituation() +"\"}");
-    	else
-    		json.append("{\"open\":\"none\"}");
-    	
-    	return json.toString();
-    }
-    
+
+		log.info("Open method");
+
+		Tap tap = dao.findTap(name);
+
+		StringBuilder json = new StringBuilder();
+		if (tap != null)
+			json.append("{\"open\":\"" + tap.isSituation() + "\"}");
+		else
+			json.append("{\"open\":\"none\"}");
+
+		return json.toString();
+	}
 
 	@Override
 	public void sendEmail() {
-		
+
 		InitialContext ic;
 		try {
 			ic = new InitialContext();
-			ConnectionFactory connectionFactory = (ConnectionFactory) ic.lookup("java:jboss/DefaultJMSConnectionFactory");
+			ConnectionFactory connectionFactory = (ConnectionFactory) ic
+					.lookup("java:jboss/DefaultJMSConnectionFactory");
 			Queue queue = (Queue) ic.lookup("java:/jms/queue/ExpiryQueue");
-			
+
 			JMSContext jmsContext = connectionFactory.createContext();
 			JMSProducer producer = jmsContext.createProducer();
-			
+
 			MapMessage map = jmsContext.createMapMessage();
 			map.setString("test", "Test value");
-			
+
 			producer.send(queue, map);
-			
+
 		} catch (NamingException | JMSException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

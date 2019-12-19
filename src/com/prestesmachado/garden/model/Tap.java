@@ -30,6 +30,8 @@ public class Tap {
 	
 	private boolean situation;
 	
+	private String tapKey;
+	
 	public long getId() {
 		return id;
 	}
@@ -52,6 +54,14 @@ public class Tap {
 
 	public void setSituation(boolean situation) {
 		this.situation = situation;
+	}
+
+	public String getTapKey() {
+		return tapKey;
+	}
+
+	public void setTapKey(String tapKey) {
+		this.tapKey = tapKey;
 	}
 	
 }

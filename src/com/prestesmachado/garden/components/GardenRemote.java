@@ -30,7 +30,7 @@ public interface GardenRemote {
 	
 	public String sigin(@PathParam("name") String name, @PathParam("password") String password);
 	
-	public String changeTapSituation(@PathParam("name") String name, @PathParam("value") boolean value);
+	public String changeTapSituation(@PathParam("name") String name, @PathParam("value") boolean value, @PathParam("key") String key );
 	
 	public String isOpen(@PathParam("name") String name);
 	
