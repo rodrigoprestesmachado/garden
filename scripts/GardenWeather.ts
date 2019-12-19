@@ -173,7 +173,7 @@ class GardenWeather {
    * @param open
    */
   private setGardenWS(operation: boolean, tap: string) {
-    let serviceUrl = this.GARDEN_WS + "/open/" + tap + "/" + operation + "/" + this.WEATHER_KEY;
+    let serviceUrl = this.GARDEN_WS + tap + "/" + operation + "/" + this.WEATHER_KEY;
     console.log("[INFO] Service URL: " + serviceUrl)
     axios
       .get(serviceUrl)
