@@ -131,10 +131,10 @@ class GardenWeather {
 
     if (rainWarnings.length > 0) {
       weather.warnings = rainWarnings;
-      weather.text = "Irá chover amanhã";
+      weather.text = "It will rain tomorrow";
       weather.action = false;
     } else {
-      weather.text = "Sem chuva prevista para amanhã";
+      weather.text = "No rain expected tomorrow";
       weather.action = true;
     }
     return weather;
@@ -188,6 +188,35 @@ class GardenWeather {
   }
 
   /**
+   * Sends an e-mail message through gmail
+   * @param message
+   */
+  private sendEmail(message: string) {
+    var transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: this.GMAIL,
+        pass: this.GMAIL_PASS
+      }
+    });
+
+    let mailOptions = {
+      from: this.GMAIL,
+      to: this.GMAIL,
+      subject: "[Garden] Weather",
+      text: message
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log("[ERROR] gmail: " + error);
+      } else {
+        console.log("[INFO] e-mail sent:" + info.response);
+      }
+    });
+  }
+
+  /**
    * Sends a message to a Telegram client
    * @param message
    */
@@ -203,35 +232,6 @@ class GardenWeather {
       '"';
     console.log("[INFO] telegram command - " + command);
     shell.exec(command);
-  }
-
-  /**
-   * Sends an e-mail message using gmail
-   * @param message
-   */
-  private sendEmail(message: string) {
-    var transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: this.GMAIL,
-        pass: this.GMAIL_PASS
-      }
-    });
-
-    let mailOptions = {
-      from: this.GMAIL,
-      to: this.GMAIL,
-      subject: "Previsão do tempo",
-      text: message
-    };
-
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log("[ERROR] gmail: " + error);
-      } else {
-        console.log("[INFO] e-mail sent:" + info.response);
-      }
-    });
   }
 
   /**
@@ -275,4 +275,3 @@ class Weather {
 console.log("[INFO] start: " + new Date());
 let g = new GardenWeather();
 g.getWeather(true, true, false);
-console.log("[INFO] end: " + new Date());

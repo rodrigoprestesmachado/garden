@@ -15,14 +15,29 @@
  */
 var gpiop = require('rpi-gpio').promise;
 const axios: any = require("axios");
+const nodemailer: any = require("nodemailer");
+const propertiesReader: any = require("properties-reader");
 
 class Tap {
 
     // Garden service
     private GARDEN_WS: string;
 
+    // Gmail configuration
+    private GMAIL: string;
+    private GMAIL_PASS: string;
+
+    // Properties file
+    private properties: any;
+
     constructor() {
-        this.GARDEN_WS = "http://code.inf.poa.ifrs.edu.br/Garden/api/v1/";
+        // Gets all configuration from a propertie file
+        this.properties = propertiesReader("properties.file");
+
+        this.GARDEN_WS = this.properties.get("garden.ws");
+
+        this.GMAIL = this.properties.get("gmail.email");
+        this.GMAIL_PASS = this.properties.get("gmail.password");
     }
 
     /**
@@ -58,13 +73,44 @@ class Tap {
                 setTimeout(() => {
                     gpiop.write(32, false);
                     console.log("[INFO] Grama molhada: " + new Date());
+                    this.sendEmail("The tap was opened");
                 }, wetTime);
             })
             .catch((err) => {
-                console.log('Error: ', err.toString())
+                console.log('[ERROR] ', err.toString())
             })
+    }
+
+    /**
+     * Sends an e-mail message through gmail
+     * 
+     * @param message
+     */
+    private sendEmail(message: string) {
+        var transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: this.GMAIL,
+                pass: this.GMAIL_PASS
+            }
+        });
+
+        let mailOptions = {
+            from: this.GMAIL,
+            to: this.GMAIL,
+            subject: "[Garden] Tap",
+            text: message
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log("[ERROR] gmail: " + error);
+            } else {
+                console.log("[INFO] e-mail sent:" + info.response);
+            }
+        });
     }
 }
 
-// Red tap can open for 45 min
-new Tap().wet("red", 2.7e+6);
+// Red tap can open for 40 min
+new Tap().wet("red", 2.4e+6);
