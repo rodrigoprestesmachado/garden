@@ -108,19 +108,9 @@ public class GardenAPI implements GardenRemote {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/isopen/{name}")
 	@Override
-	public String isOpen(@PathParam("name") String name) {
-
-		log.info("Open method");
-
-		Tap tap = dao.findTap(name);
-
-		StringBuilder json = new StringBuilder();
-		if (tap != null)
-			json.append("{\"open\":\"" + tap.isSituation() + "\"}");
-		else
-			json.append("{\"open\":\"none\"}");
-
-		return json.toString();
+	public Tap isOpen(@PathParam("name") String name) {
+		log.info("isOpen method");
+		return dao.findTap(name);
 	}
 
 	@Override

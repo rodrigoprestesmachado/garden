@@ -44,16 +44,21 @@ class Tap {
      * Opens the tap to wet the garden
      * 
      * @param tapName : the tap name
-     * @param wetTime : duration of wet in miliseconds
      */
-    public wet(tapName: string, wetTime: number) {
+    public open(tapName: string) {
+        let wettingTime = 0;
         axios
             .get(this.GARDEN_WS + "/isopen/" + tapName)
-            .then(response => {
-                if (response.data.open === "true") {
-                    this.goWet(wetTime);
-                    console.log("[INFO] Molhando grama: " + new Date());
-                }
+            .then(resp => {
+                if (resp.data.situation === true)
+                    // 40 minuts
+                    wettingTime = 2.4e+6;
+                else
+                    // 15 minuts
+                    wettingTime = 900000;
+
+                console.log("[INFO] Molhando grama: " + new Date());
+                this.powerUpGpio(resp.data.pin, wettingTime);
             })
             .catch(error => {
                 console.log("[ERROR] " + error);
@@ -61,20 +66,25 @@ class Tap {
     }
 
     /**
-     * Enables the GPIO
+     * Enables the GPIO to wet the garden
      * 
-     * @param wetTime : duration of wet in miliseconds
+     * @param wettingTime : The duration of wet in miliseconds
      */
-    private goWet(wetTime: number) {
+    private powerUpGpio(pin: number, wettingTime: number) {
         // Pin 32 of GPIO
-        gpiop.setup(32, gpiop.DIR_OUT)
+        gpiop.setup(pin, gpiop.DIR_OUT)
             .then(() => {
-                gpiop.write(32, true);
+                // Opens the tap
+                gpiop.write(pin, true);
+                // Waits to close
                 setTimeout(() => {
-                    gpiop.write(32, false);
+                    // Close the tap
+                    gpiop.write(pin, false);
+                    let strTime = "";
+                    wettingTime == 900000 ? strTime = "15" : strTime = "45";
+                    this.sendEmail("The tap was opene for " + strTime + "minuts");
                     console.log("[INFO] Grama molhada: " + new Date());
-                    this.sendEmail("The tap was opened");
-                }, wetTime);
+                }, wettingTime);
             })
             .catch((err) => {
                 console.log('[ERROR] ', err.toString())
@@ -84,7 +94,7 @@ class Tap {
     /**
      * Sends an e-mail message through gmail
      * 
-     * @param message
+     * @param message : The e-mail content
      */
     private sendEmail(message: string) {
         var transporter = nodemailer.createTransport({
@@ -112,5 +122,5 @@ class Tap {
     }
 }
 
-// Red tap can open for 40 min
-new Tap().wet("red", 2.4e+6);
+// Opens one tap
+new Tap().open("red");

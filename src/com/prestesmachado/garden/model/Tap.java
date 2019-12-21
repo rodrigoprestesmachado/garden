@@ -19,17 +19,23 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Tap {
 	
 	@Id
 	@GeneratedValue
+	@JsonIgnore
 	private long id;
 	
 	private String name;
 	
 	private boolean situation;
 	
+	private byte pin;
+	
+	@JsonIgnore
 	private String tapKey;
 	
 	public long getId() {
@@ -62,6 +68,14 @@ public class Tap {
 
 	public void setTapKey(String tapKey) {
 		this.tapKey = tapKey;
+	}
+
+	public byte getPin() {
+		return pin;
+	}
+
+	public void setPin(byte pin) {
+		this.pin = pin;
 	}
 	
 }

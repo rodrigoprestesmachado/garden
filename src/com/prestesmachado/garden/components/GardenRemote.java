@@ -20,6 +20,8 @@ package com.prestesmachado.garden.components;
 import javax.ejb.Remote;
 import javax.ws.rs.PathParam;
 
+import com.prestesmachado.garden.model.Tap;
+
 /**
  * Garden API contract
  * 
@@ -32,7 +34,7 @@ public interface GardenRemote {
 	
 	public String changeTapSituation(@PathParam("name") String name, @PathParam("value") boolean value, @PathParam("key") String key );
 	
-	public String isOpen(@PathParam("name") String name);
+	public Tap isOpen(@PathParam("name") String name);
 	
 	public void sendEmail();
 }
