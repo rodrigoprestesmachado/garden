@@ -27,6 +27,9 @@ class Tap {
     private GMAIL: string;
     private GMAIL_PASS: string;
 
+    // Defaul pin
+    private DEFAUL_PIN: any;
+
     // Properties file
     private properties: any;
 
@@ -38,6 +41,8 @@ class Tap {
 
         this.GMAIL = this.properties.get("gmail.email");
         this.GMAIL_PASS = this.properties.get("gmail.password");
+
+        this.DEFAUL_PIN = 32;
     }
 
     /**
@@ -62,6 +67,9 @@ class Tap {
             })
             .catch(error => {
                 console.log("[ERROR] " + error);
+                // Default wet time 30 minuts
+                wettingTime = 1.8e+6;
+                this.powerUpGpio(this.DEFAUL_PIN, wettingTime);
             });
     }
 
@@ -80,10 +88,8 @@ class Tap {
                 setTimeout(() => {
                     // Close the tap
                     gpiop.write(pin, false);
-                    let strTime = "";
-                    wettingTime == 900000 ? strTime = "15" : strTime = "45";
-                    this.sendEmail("The tap was opene for " + strTime + "minuts");
-                    console.log("[INFO] Grama molhada: " + new Date());
+                    this.sendEmail("The tap was opene for " + wettingTime + " miliseconds");
+                    console.log("[INFO] The garden was wet: " + new Date());
                 }, wettingTime);
             })
             .catch((err) => {
